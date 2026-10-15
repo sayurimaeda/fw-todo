@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,5 +46,12 @@ public class HomeController {
     public String rewriteCreate(@ModelAttribute Todo todo, Model model) {
         model.addAttribute("todo", todo);
         return "create";
+    }
+
+    @PostMapping("/todos")
+    public String createTodo(@ModelAttribute Todo todo, RedirectAttributes redirectAttributes) {
+        todoMapper.insert(todo);
+        redirectAttributes.addFlashAttribute("message", "登録しました");
+        return "redirect:/todos";
     }
 }
