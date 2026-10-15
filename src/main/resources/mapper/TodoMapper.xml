@@ -6,15 +6,11 @@
 
     <select id="findAll" resultType="com.example.todoapp.Todo">
         SELECT
-            id,
             title,
-            detail,
             category,
             priority,
             due_date,
-            completed,
-            created_at,
-            updated_at
+            completed
         FROM todos
         ORDER BY due_date ASC
     </select>
