@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>やること一覧</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
     <main class="container">
-        <h1 class="page-title">やること一覧</h1>
-
         <p class="flash" th:if="${message != null}" th:text="${message}"></p>
+
+        <h1 class="page-title">やること一覧</h1>
 
         <p><a href="/todos/new">新規登録</a></p>
 
@@ -24,18 +26,24 @@
                     <th scope="col">優先度</th>
                     <th scope="col">期限</th>
                     <th scope="col">状態</th>
+                    <th scope="col">操作</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="todo : ${todos}">
-                    <td th:text="${todo.title}">やること</td>
+                    <td><span th:text="${todo.title}">やること</span></td>
                     <td th:text="${todo.category}">ジャンル</td>
                     <td th:text="${todo.priority == 1 ? '高' : (todo.priority == 2 ? '中' : '低')}">優先度</td>
                     <td th:text="${todo.dueDate}">期限</td>
                     <td th:text="${todo.completed ? '完了' : '未完了'}">状態</td>
+                    <td>
+                        <a class="link" th:href="@{/todos/{id}/edit(id=${todo.id})}">編集</a>
+                        <a class="link" th:href="@{/todos/{id}/delete(id=${todo.id})}">削除</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </main>
 </body>
+
 </html>
