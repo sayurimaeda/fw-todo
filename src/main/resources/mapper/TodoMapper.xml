@@ -23,10 +23,10 @@
         </where>
         <choose>
             <when test="order == 'desc'">
-                ORDER BY due_date DESC
+                ORDER BY due_date IS NULL ASC, due_date DESC
             </when>
             <otherwise>
-                ORDER BY due_date ASC
+                ORDER BY due_date IS NULL ASC, due_date ASC
             </otherwise>
         </choose>
     </select>
