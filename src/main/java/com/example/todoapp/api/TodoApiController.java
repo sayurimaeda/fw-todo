@@ -1,6 +1,7 @@
 package com.example.todoapp.api;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,8 +41,12 @@ public class TodoApiController {
     public List<TodoDto> getTodos(
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "category", required = false) String category,
-            @RequestParam(name = "order", required = false) String order) {
-        List<Todo> todos = todoService.search(keyword, category, order);
+            @RequestParam(name = "order", required = false) String order,
+            @RequestParam(name = "from", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(name = "to", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        List<Todo> todos = todoService.search(keyword, category, order, from, to);
         List<Todo> orderedTodos = Stream.concat(
                 todos.stream().filter(todo -> todo.getDueDate() == null),
                 todos.stream().filter(todo -> todo.getDueDate() != null))

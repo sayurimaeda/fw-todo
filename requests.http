@@ -5,7 +5,7 @@ POST http://localhost:8080/api/todos
 Content-Type: application/json
 
 {
-  "title": "pン",
+  "title": "パン",
   "category": "プログラミング",
   "priority": 2,
   "dueDate": "2026-11-01"
@@ -29,3 +29,51 @@ Content-Type: application/json
 
 ### 4. 1件削除する
 DELETE http://localhost:8080/api/todos/1
+
+### 6. 自分のアプリの祝日API
+GET http://localhost:8080/api/holidays
+
+###
+GET http://localhost:8080/api/todos?from=2026-04-01&to=2026-04-30
+
+### 就職活動の準備1
+POST http://localhost:8080/api/todos
+Content-Type: application/json
+
+{
+  "title": "履歴書を見直す",
+  "category": "就職活動",
+  "priority": 1,
+  "dueDate": "2026-04-04"
+}
+
+### 就職活動の準備2
+POST http://localhost:8080/api/todos
+Content-Type: application/json
+
+{
+  "title": "応募先の企業研究をする",
+  "category": "就職活動",
+  "priority": 2,
+  "dueDate": "2026-04-04"
+}
+
+### 就職活動の準備3
+POST http://localhost:8080/api/todos
+Content-Type: application/json
+
+{
+  "title": "面接で話す内容を練習する",
+  "category": "就職活動",
+  "priority": 3,
+  "dueDate": "2026-04-04"
+}
+
+### 4. 1件削除する
+DELETE http://localhost:8080/api/todos/17
+
+### 4. 1件削除する
+DELETE http://localhost:8080/api/todos/18
+
+### 4. 1件削除する
+DELETE http://localhost:8080/api/todos/19
