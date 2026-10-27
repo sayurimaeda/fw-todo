@@ -4,8 +4,8 @@
 
 body {
     margin: 0;
-    color: #334155;
-    background: #ffffff;
+    color: #e2e8f0;
+    background: #0f172a;
     font-family: sans-serif;
     font-size: 16px;
     line-height: 1.6;
@@ -20,7 +20,7 @@ body {
 
 .page-title {
     margin: 0 0 24px;
-    color: #1e293b;
+    color: #f8fafc;
     font-size: 28px;
 }
 
@@ -31,23 +31,32 @@ body {
 
 .todo-table th,
 .todo-table td {
-    border: 1px solid #94a3b8;
+    border: 1px solid #64748b;
     padding: 6px 10px;
     text-align: left;
     font-size: 14px;
 }
 
 .todo-table th {
-    background: #f1f5f9;
+    background: #1e293b;
     font-weight: bold;
+}
+
+.todo-table tbody tr.todo-overdue {
+    background: #451a1a;
+}
+
+.priority-mark {
+    margin-left: 6px;
+    color: #fbbf24;
 }
 
 .flash {
     margin: 0 0 16px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid #475569;
     border-radius: 8px;
     padding: 8px 12px;
-    background: #f1f5f9;
+    background: #1e293b;
 }
 
 .search-bar {
@@ -56,6 +65,13 @@ body {
     align-items: end;
     gap: 12px;
     margin-bottom: 20px;
+}
+
+.search-bar input,
+.search-bar select {
+    border-color: #64748b;
+    background-color: #1e293b;
+    color: #f8fafc;
 }
 
 .form-row {
@@ -69,11 +85,11 @@ body {
 
 .form-input {
     width: 100%;
-    border: 1px solid #94a3b8;
+    border: 1px solid #64748b;
     border-radius: 6px;
     padding: 7px 10px;
-    background: #ffffff;
-    color: #334155;
+    background: #1e293b;
+    color: #f8fafc;
     font: inherit;
 }
 
@@ -83,7 +99,7 @@ body {
 
 .error {
     margin: 4px 0 0;
-    color: #B91C1C;
+    color: #fca5a5;
     font-weight: bold;
 }
 
@@ -98,24 +114,28 @@ body {
 
 .btn {
     display: inline-block;
-    border: 1px solid #334155;
+    border: 1px solid #cbd5e1;
     border-radius: 7px;
     padding: 7px 18px;
     background: #334155;
-    color: #ffffff;
+    color: #f8fafc;
     font: inherit;
     text-decoration: none;
     cursor: pointer;
 }
 
 .btn.sub {
-    background: #ffffff;
-    color: #334155;
+    background: #1e293b;
+    color: #f8fafc;
 }
 
 .link {
-    color: #334155;
+    color: #93c5fd;
     text-decoration: underline;
+}
+
+a:visited:not(.btn) {
+    color: #93c5fd;
 }
 
 .calendar-navigation {
@@ -139,7 +159,7 @@ body {
 .calendar-table th,
 .calendar-table td {
     height: 72px;
-    border: 1px solid #94a3b8;
+    border: 1px solid #64748b;
     padding: 8px;
     text-align: left;
     vertical-align: top;
@@ -147,7 +167,7 @@ body {
 
 .calendar-table th {
     height: auto;
-    background: #f1f5f9;
+    background: #1e293b;
 }
 
 @media (max-width: 600px) {

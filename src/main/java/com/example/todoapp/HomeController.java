@@ -31,14 +31,35 @@ public class HomeController {
     @GetMapping("/todos")
     public String todos(@RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category,
-            @RequestParam(defaultValue = "asc") String order, Model model) {
+            @RequestParam(defaultValue = "asc") String order,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "false") boolean showCompleted,
+            @RequestParam(defaultValue = "0") int trash, Model model) {
         String searchKeyword = keyword == null ? "" : keyword;
         String selectedCategory = category == null ? "" : category;
         String sortOrder = "desc".equals(order) ? "desc" : "asc";
-        model.addAttribute("todos", todoService.search(searchKeyword, selectedCategory, sortOrder));
+        int pageSize = 10;
+        boolean trashView = trash == 1;
+        int totalCount = trashView
+                ? todoService.countTrash()
+                : todoService.countSearch(searchKeyword, selectedCategory, showCompleted);
+        int totalPages = (totalCount + pageSize - 1) / pageSize;
+        int currentPage = Math.max(1, page);
+        if (totalPages > 0) {
+            currentPage = Math.min(currentPage, totalPages);
+        }
+        int offset = (currentPage - 1) * pageSize;
+        model.addAttribute("todos", trashView
+                ? todoService.searchTrashPage(pageSize, offset)
+                : todoService.searchPage(
+                        searchKeyword, selectedCategory, sortOrder, showCompleted, pageSize, offset));
         model.addAttribute("keyword", searchKeyword);
         model.addAttribute("category", selectedCategory);
         model.addAttribute("order", sortOrder);
+        model.addAttribute("showCompleted", showCompleted);
+        model.addAttribute("trash", trashView);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
         return "todos";
     }
 
@@ -124,6 +145,30 @@ public class HomeController {
     public String deleteTodo(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         todoService.delete(id);
         redirectAttributes.addFlashAttribute("message", "削除しました");
+        return "redirect:/todos";
+    }
+
+    @PostMapping("/todos/{id}/restore")
+    public String restoreTodo(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        todoService.restore(id);
+        redirectAttributes.addFlashAttribute("message", "復元しました");
+        return "redirect:/todos?trash=1";
+    }
+
+    @PostMapping("/todos/{id}/pin")
+    public String togglePinned(@PathVariable Long id,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "asc") String order,
+            @RequestParam(defaultValue = "false") boolean showCompleted,
+            @RequestParam(defaultValue = "1") int page,
+            RedirectAttributes redirectAttributes) {
+        todoService.togglePinned(id);
+        if (keyword != null) redirectAttributes.addAttribute("keyword", keyword);
+        if (category != null) redirectAttributes.addAttribute("category", category);
+        redirectAttributes.addAttribute("order", order);
+        redirectAttributes.addAttribute("showCompleted", showCompleted);
+        redirectAttributes.addAttribute("page", page);
         return "redirect:/todos";
     }
 

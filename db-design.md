@@ -23,6 +23,9 @@
 | `priority` | `INT` | 不可 | `2` | 優先度。`1`＝高、`2`＝中、`3`＝低 |
 | `due_date` | `DATE` | 可 | なし | 期限 |
 | `completed` | `BOOLEAN` | 不可 | `FALSE`（未完了） | 完了状態 |
+| `completed_at` | `DATETIME` | 可 | なし | 完了にした日時 |
+| `deleted_at` | `DATETIME` | 可 | なし | 削除済みを示す日時。復元すると空にします |
+| `pinned` | `BOOLEAN` | 不可 | `FALSE`（印なし） | 一覧で上に固定する印 |
 | `created_at` | `DATETIME` | 不可 | 登録時に現在日時を自動設定 | 登録日時 |
 | `updated_at` | `DATETIME` | 不可 | 登録時に現在日時を設定し、更新時に自動更新 | 最終更新日時 |
 
@@ -38,6 +41,7 @@
 | 優先度を保存し、高・中・低と表示する（要件定義書 4-1、4-2、5） | `priority` | `1`・`2`・`3` を保存し、初期値は `2` です。画面表示の言葉への変換はアプリ側で行います。 |
 | 期限を保存し、期限順に並べ替える（要件定義書 4-5） | `due_date` | 日付を保存します。未指定は `NULL` にできます。並び順の処理はアプリ側で行います。 |
 | 完了状態を保存し、完了・未完了と表示する（要件定義書 4-1、4-3） | `completed` | `TRUE`／`FALSE` を保存します。初期値は未完了（`FALSE`）です。画面表示の言葉への変換はアプリ側で行います。 |
+| 完了にした日時を記録する | `completed_at` | 未完了から完了に変えた日時を保存します。未完了に戻すと `NULL` にします。 |
 | 1件を特定して編集・削除する（要件定義書 4-3、4-4） | `id` | 自動採番する一意の番号を主キーとして使います。 |
 | 登録日時を自動で記録する（handout_app_spec.md 2） | `created_at` | MySQLが登録時に日時を設定します。 |
 | 最終更新日時を自動で記録する（handout_app_spec.md 2） | `updated_at` | MySQLが登録時に日時を設定し、行の更新時に日時を更新します。 |
@@ -80,6 +84,9 @@ CREATE TABLE todos (
     priority INT NOT NULL DEFAULT 2,
     due_date DATE NULL,
     completed BOOLEAN NOT NULL DEFAULT FALSE,
+    completed_at DATETIME NULL,
+    deleted_at DATETIME NULL,
+    pinned BOOLEAN NOT NULL DEFAULT FALSE,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
