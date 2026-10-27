@@ -95,7 +95,7 @@ Accept: application/json, text/event-stream
 }
 
 ### 9. 道具を1つ呼んでみる
-@mcpSessionId = REPLACE_WITH_SESSION_ID
+@mcpSessionId = aa194bff-eb29-4876-aa8d-534653877d36
 
 POST http://localhost:8080/mcp
 Content-Type: application/json
