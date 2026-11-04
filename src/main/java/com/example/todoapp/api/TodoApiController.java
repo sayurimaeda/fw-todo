@@ -7,12 +7,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+import java.nio.charset.StandardCharsets;
 
 import com.example.todoapp.Todo;
 import com.example.todoapp.TodoService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -55,6 +58,37 @@ public class TodoApiController {
                 .map(todo -> todoService.findById(todo.getId()))
                 .map(TodoDto::from)
                 .toList();
+    }
+
+    @GetMapping(value = "/api/todos.csv", produces = "text/csv")
+    public ResponseEntity<byte[]> exportTodosCsv(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "order", defaultValue = "asc") String order,
+            @RequestParam(name = "showCompleted", defaultValue = "false") boolean showCompleted) {
+        String sortOrder = "desc".equals(order) ? "desc" : "asc";
+        StringBuilder csv = new StringBuilder("\uFEFF");
+        csv.append("やること,印,ジャンル,優先度,期限,状態,メモ\r\n");
+        for (Todo todo : todoService.searchForExport(keyword, category, sortOrder, showCompleted)) {
+            appendCsvRow(csv, todo.getTitle(), Boolean.TRUE.equals(todo.getPinned()) ? "あり" : "なし",
+                    todo.getCategory(), todo.getPriority() == null ? "" : todo.getPriority().toString(),
+                    todo.getDueDate() == null ? "" : todo.getDueDate().toString(),
+                    Boolean.TRUE.equals(todo.getCompleted()) ? "完了" : "未完了", todo.getDetail());
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("text", "csv", StandardCharsets.UTF_8));
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"todos.csv\"");
+        return ResponseEntity.ok().headers(headers).body(csv.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void appendCsvRow(StringBuilder csv, String... values) {
+        for (int i = 0; i < values.length; i++) {
+            if (i > 0) csv.append(',');
+            String value = values[i] == null ? "" : values[i];
+            if (value.matches("^[\\s]*[=+@-].*")) value = "'" + value;
+            csv.append('"').append(value.replace("\"", "\"\"")).append('"');
+        }
+        csv.append("\r\n");
     }
 
     @GetMapping("/api/todos/{id}")

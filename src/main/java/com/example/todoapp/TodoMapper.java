@@ -22,6 +22,11 @@ public interface TodoMapper {
             @Param("limit") int limit,
             @Param("offset") int offset);
 
+    List<Todo> searchForExport(@Param("keyword") String keyword,
+            @Param("category") String category,
+            @Param("order") String order,
+            @Param("showCompleted") boolean showCompleted);
+
     int countSearch(@Param("keyword") String keyword,
             @Param("category") String category,
             @Param("showCompleted") boolean showCompleted);

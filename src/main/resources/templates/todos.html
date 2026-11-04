@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>やること一覧</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.css?v=theme-4">
 </head>
 
 <body>
@@ -41,6 +41,7 @@
             </form>
             <a class="link" th:href="@{/todos(keyword=${keyword},category=${category},order='asc',showCompleted=${showCompleted},page=${currentPage})}">期限が近い順</a>
             <a class="link" th:href="@{/todos(keyword=${keyword},category=${category},order='desc',showCompleted=${showCompleted},page=${currentPage})}">期限が遠い順</a>
+            <a class="link" th:href="@{/api/todos.csv(keyword=${keyword},category=${category},order=${order},showCompleted=${showCompleted})}">CSVで書き出す</a>
         </div>
 
         <p th:if="${#lists.isEmpty(todos)}" th:text="${trash ? 'ごみ箱は空です' : 'まだ1件も登録されていません'}">まだ1件も登録されていません</p>
@@ -114,6 +115,7 @@
             }
         });
     </script>
+    <script src="/js/theme-toggle.js?v=theme-4"></script>
 </body>
 
 </html>

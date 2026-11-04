@@ -90,6 +90,31 @@
         </where>
     </select>
 
+    <select id="searchForExport" resultType="com.example.todoapp.Todo">
+        SELECT id, title, detail, category, priority, due_date, completed, completed_at AS completedAt, pinned
+        FROM todos
+        <where>
+            AND deleted_at IS NULL
+            <if test="keyword != null and keyword != ''">
+                AND title LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="showCompleted == false">
+                AND completed = FALSE
+            </if>
+        </where>
+        <choose>
+            <when test="order == 'desc'">
+                ORDER BY pinned DESC, due_date IS NULL ASC, due_date DESC, id ASC
+            </when>
+            <otherwise>
+                ORDER BY pinned DESC, due_date IS NULL ASC, due_date ASC, id ASC
+            </otherwise>
+        </choose>
+    </select>
+
     <select id="searchTrashPage" resultType="com.example.todoapp.Todo">
         SELECT
             id,
