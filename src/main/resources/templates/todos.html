@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>やること一覧</title>
-    <link rel="stylesheet" href="/css/style.css?v=theme-4">
+    <link rel="stylesheet" href="/css/style.css?v=theme-8">
 </head>
 
 <body>
@@ -13,11 +13,22 @@
         <p class="flash" th:if="${message != null}" th:text="${message}"></p>
 
         <h1 class="page-title" th:text="${trash ? 'ごみ箱' : 'やること一覧'}">やること一覧</h1>
-
-        <p th:unless="${trash}"><a href="/todos/new">新規登録</a> <a class="link" href="/calendar">カレンダーで見る</a> <a class="link" href="/todos?trash=1">ごみ箱を見る</a></p>
-        <p th:if="${trash}"><a class="link" href="/todos">一覧へ戻る</a></p>
-
-        <div class="search-bar" th:unless="${trash}">
+        <nav class="page-nav" th:unless="${trash}" aria-label="&#20027;&#12394;&#25805;&#20316;">
+    <a class="nav-action" href="/todos/new"><span class="nav-icon" aria-hidden="true">&#65291;</span>&#26032;&#35215;&#30331;&#37682;</a>
+    <a class="nav-action" href="/templates"><span class="nav-icon" aria-hidden="true">&#128203;</span>&#12486;&#12531;&#12503;&#12524;&#12540;&#12488;</a>
+    <a class="nav-action" href="/calendar"><span class="nav-icon" aria-hidden="true">&#128197;</span>&#12459;&#12524;&#12531;&#12480;&#12540;&#12391;&#35211;&#12427;</a>
+    <a class="nav-action" href="/todos?trash=1"><span class="nav-icon" aria-hidden="true">&#128465;</span>&#12372;&#12415;&#31665;&#12434;&#35211;&#12427;</a>
+</nav>
+<p th:if="${trash}"><a class="link" href="/todos">&#19968;&#35239;&#12408;&#25147;&#12427;</a></p>
+<section class="voice-tools" th:unless="${trash}" aria-labelledby="voice-heading">
+    <div class="voice-tools-copy">
+        <h2 id="voice-heading">&#38899;&#22768;&#12391;&#30906;&#35469;</h2>
+        <p>&#29694;&#22312;&#34920;&#31034;&#20013;&#12398;&#26410;&#23436;&#20102;ToDo&#12434;&#35501;&#12415;&#19978;&#12370;&#12414;&#12377;&#12290;</p>
+        <p class="voice-status" aria-live="polite"></p>
+    </div>
+    <button class="btn sub" id="read-incomplete-todos" type="button"><span aria-hidden="true">&#128266;</span> &#19968;&#35239;&#12434;&#35501;&#12415;&#19978;&#12370;&#12427;</button>
+</section>
+<div class="search-bar" th:unless="${trash}">
             <form th:action="@{/todos}" method="get">
                 <label for="keyword">やることの名前</label>
                 <input type="text" id="keyword" name="keyword" th:value="${keyword}">
@@ -61,7 +72,7 @@
             <tbody>
                 <tr th:each="todo : ${todos}"
                     th:attr="data-due-date=${todo.dueDate == null ? '' : todo.dueDate},data-completed=${todo.completed}">
-                    <td><span th:text="${todo.title}">やること</span></td>
+                    <td><span th:text="${todo.title}">やること</span><br th:if="${!#strings.isEmpty(todo.detail)}"><small class="todo-detail" th:if="${!#strings.isEmpty(todo.detail)}" th:text="${todo.detail}">メモ</small></td>
                     <td>
                         <form th:unless="${trash}" th:action="@{/todos/{id}/pin(id=${todo.id})}" method="post">
                             <input type="hidden" name="keyword" th:value="${keyword}">
@@ -110,12 +121,20 @@
         const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         document.querySelectorAll('.todo-table tbody tr').forEach(row => {
             const dueDate = row.dataset.dueDate;
-            if (dueDate && dueDate < today && row.dataset.completed !== 'true') {
-                row.classList.add('todo-overdue');
+            if (dueDate && row.dataset.completed !== 'true') {
+                if (dueDate < today) {
+                    row.classList.add('todo-overdue');
+                } else {
+                    const daysUntilDue = (Date.parse(`${dueDate}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / 86400000;
+                    if (daysUntilDue <= 3) {
+                        row.classList.add('todo-due-soon');
+                    }
+                }
             }
         });
     </script>
-    <script src="/js/theme-toggle.js?v=theme-4"></script>
+    <script src="/js/voice.js?v=voice-1"></script>
+    <script src="/js/theme-toggle.js?v=theme-7"></script>
 </body>
 
 </html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>テンプレート一覧</title>
+    <link rel="stylesheet" href="/css/style.css?v=theme-8">
+</head>
+<body>
+<main class="container">
+    <h1 class="page-title">テンプレート一覧</h1>
+    <p class="flash" th:if="${message}" th:text="${message}"></p>
+    <p><a class="btn" href="/templates/new">テンプレートを登録</a> <a class="btn sub" href="/todos">ToDo一覧へ</a></p>
+    <p th:if="${#lists.isEmpty(templates)}">テンプレートはまだありません。</p>
+    <section class="flash" th:each="template : ${templates}">
+        <h2 th:text="${template.name}">テンプレート名</h2>
+        <p th:if="${!#strings.isEmpty(template.description)}">テンプレートの説明：<span th:text="${template.description}">説明</span></p>
+        <p>ジャンル：<span th:text="${template.category == null ? '未設定（選んでから作成）' : template.category}">ジャンル</span></p>
+        <ul><li th:each="item : ${template.items}" th:text="${item}">タスク名</li></ul>
+        <form th:action="@{/templates/{id}/apply(id=${template.id})}" method="post">
+            <label>今回の説明・メモ（ToDoに保存）
+                <textarea class="form-input" name="detail" maxlength="255" placeholder="今回だけの補足を書けます"></textarea>
+            </label>
+            <label th:if="${template.category == null}">作成するToDoのジャンル
+                <select class="form-input" name="category" required>
+                    <option value="">ジャンルを選択</option>
+                    <option value="デザイン">デザイン</option><option value="マーケティング">マーケティング</option>
+                    <option value="プログラミング">プログラミング</option><option value="資格">資格</option><option value="就職活動">就職活動</option>
+                </select>
+            </label>
+            <label>優先度
+                <select class="form-input" name="priority"><option value="1">高</option><option value="2" selected>中</option><option value="3">低</option></select>
+            </label>
+            <label>期限（任意） <input class="form-input" type="date" name="dueDate"></label>
+            <button class="btn" type="submit">このテンプレートからToDoを作成</button>
+        </form>
+        <form th:action="@{/templates/{id}/delete(id=${template.id})}" method="post" style="margin-top:8px">
+            <button class="link" type="submit">テンプレートを削除</button>
+        </form>
+    </section>
+</main>
+<script src="/js/theme-toggle.js?v=theme-7"></script>
+</body>
+</html>

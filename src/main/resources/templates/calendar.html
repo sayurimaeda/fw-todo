@@ -5,34 +5,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>カレンダー</title>
-    <link rel="stylesheet" th:href="@{/css/style.css(v='theme-4')}">
+    <link rel="stylesheet" th:href="@{/css/style.css(v='theme-9')}">
 </head>
 
 <body>
     <main class="container">
-        <h1 class="page-title" th:text="${displayedMonth.year + '年' + displayedMonth.monthValue + '月'}">年月</h1>
+        <h1 class="page-title" th:text="${displayTitle}">Calendar</h1>
 
-        <nav class="calendar-navigation" aria-label="月の移動">
+        <nav class="calendar-navigation" aria-label="&#12459;&#12524;&#12531;&#12480;&#12540;&#31227;&#21205;">
             <div class="calendar-navigation-group">
-                <a class="link" th:href="@{/calendar(year=${previousMonth.year},month=${previousMonth.monthValue})}">前の月</a>
-                <a class="link" th:href="@{/calendar(year=${nextMonth.year},month=${nextMonth.monthValue})}">次の月</a>
+                <a class="link" th:if="${weekView}" th:href="@{/calendar(view='week',date=${previousWeekDate})}">&#21069;&#12398;&#36913;</a>
+                <a class="link" th:if="${weekView}" th:href="@{/calendar(view='week',date=${nextWeekDate})}">&#27425;&#12398;&#36913;</a>
+                <a class="link" th:unless="${weekView}" th:href="@{/calendar(year=${previousMonth.year},month=${previousMonth.monthValue})}">&#21069;&#12398;&#26376;</a>
+                <a class="link" th:unless="${weekView}" th:href="@{/calendar(year=${nextMonth.year},month=${nextMonth.monthValue})}">&#27425;&#12398;&#26376;</a>
             </div>
             <div class="calendar-navigation-group">
-                <a class="link" href="/todos">表で見る</a>
-                <a class="link" href="/todos/new">新規登録</a>
+                <a class="link" th:if="${weekView}" th:href="@{/calendar(year=${displayedMonth.year},month=${displayedMonth.monthValue})}">&#26376;&#34920;&#31034;</a>
+                <a class="link" th:unless="${weekView}" th:href="@{/calendar(view='week',date=${selectedDate})}">&#36913;&#34920;&#31034;</a>
+                <a class="link" href="/todos">&#19968;&#35239;&#12408;&#25147;&#12427;</a>
+                <a class="link" href="/todos/new">&#26032;&#35215;&#30331;&#37682;</a>
             </div>
         </nav>
 
-        <table class="calendar-table" th:attr="data-from=${firstDay},data-to=${lastDay}">
+        <table class="calendar-table" th:classappend="${weekView ? 'weekly-calendar' : ''}"
+            th:attr="data-from=${firstDay},data-to=${lastDay},data-view=${weekView ? 'week' : 'month'}">
             <thead>
                 <tr>
-                    <th scope="col">日</th>
-                    <th scope="col">月</th>
-                    <th scope="col">火</th>
-                    <th scope="col">水</th>
-                    <th scope="col">木</th>
-                    <th scope="col">金</th>
-                    <th scope="col">土</th>
+                    <th scope="col">&#26376;</th>
+                    <th scope="col">&#28779;</th>
+                    <th scope="col">&#27700;</th>
+                    <th scope="col">&#26408;</th>
+                    <th scope="col">&#37329;</th>
+                    <th scope="col">&#22303;</th>
+                    <th scope="col">&#26085;</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,7 +45,7 @@
                     <td th:each="offset : ${#numbers.sequence(0, 6)}"
                         th:with="date=${calendarDays[weekStart + offset]}"
                         th:attr="data-date=${date != null ? date : null}">
-                        <span th:if="${date != null}" th:text="${date.dayOfMonth}">日付</span>
+                        <span class="calendar-day" th:if="${date != null}" th:text="${date.dayOfMonth}">日付</span>
                     </td>
                 </tr>
             </tbody>
@@ -54,6 +59,55 @@
             const params = new URLSearchParams({ from, to });
             const res = await fetch(`/api/todos?${params.toString()}`);
             const holidayRes = await fetch(`/api/holidays?${params.toString()}`);
+
+            let weather = {};
+            try {
+                const weatherRes = await fetch(`/api/weather?${params.toString()}`);
+                if (weatherRes.ok && !weatherRes.headers.has('X-Weather-Unavailable')) {
+                    weather = await weatherRes.json();
+                }
+            } catch (error) {
+                // Weather is optional; keep rendering the calendar without it.
+            }
+
+            Object.entries(weather).forEach(([date, dayWeather]) => {
+                const cell = calendar.querySelector(`td[data-date="${date}"]`);
+                if (!cell) return;
+                const weatherLabel = document.createElement('div');
+                weatherLabel.className = 'calendar-weather';
+                const weatherIcon = document.createElement('span');
+                weatherIcon.className = 'calendar-weather-icon';
+                const code = dayWeather.weatherCode;
+                weatherIcon.textContent = code === 0 ? '\u2600\uFE0F'
+                    : code === 1 ? '\u{1F324}'
+                    : code === 2 ? '\u26C5'
+                    : code === 3 ? '\u2601\uFE0F'
+                    : [45, 48].includes(code) ? '\u{1F32B}'
+                    : [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code) ? '\u{1F327}'
+                    : [71, 73, 75, 77, 85, 86].includes(code) ? '\u{1F328}'
+                    : [95, 96, 99].includes(code) ? '\u26C8\uFE0F' : '\u{1F321}';
+                weatherIcon.setAttribute('aria-label', dayWeather.description);
+                weatherLabel.append(weatherIcon);
+
+                if (dayWeather.temperatureMax != null || dayWeather.temperatureMin != null) {
+                    const temperatures = document.createElement('div');
+                    temperatures.className = 'calendar-temperatures';
+                    if (dayWeather.temperatureMax != null) {
+                        const high = document.createElement('span');
+                        high.className = 'temperature-high';
+                        high.textContent = `${Math.round(dayWeather.temperatureMax)}\u00B0`;
+                        temperatures.append(high);
+                    }
+                    if (dayWeather.temperatureMin != null) {
+                        const low = document.createElement('span');
+                        low.className = 'temperature-low';
+                        low.textContent = `${Math.round(dayWeather.temperatureMin)}\u00B0`;
+                        temperatures.append(low);
+                    }
+                    weatherLabel.append(temperatures);
+                }
+                cell.append(weatherLabel);
+            });
 
             if (holidayRes.headers.has('X-Holidays-Unavailable')) {
                 const message = document.createElement('p');
@@ -105,7 +159,8 @@
             const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
             todosByDate.forEach((dayTodos, date) => {
                 const cell = cellsByDate.get(date);
-                dayTodos.slice(0, 3).forEach(todo => {
+                const todosToShow = calendar.dataset.view === 'week' ? dayTodos : dayTodos.slice(0, 3);
+                todosToShow.forEach(todo => {
                     const taskName = document.createElement('a');
                     taskName.href = `/todos/${todo.id}/edit`;
                     taskName.className = 'link';
@@ -117,7 +172,7 @@
                     cell.append(taskName);
                 });
 
-                if (dayTodos.length > 3) {
+                if (calendar.dataset.view !== 'week' && dayTodos.length > 3) {
                     const moreTasks = document.createElement('div');
                     moreTasks.textContent = `ほか ${dayTodos.length - 3}件`;
                     cell.append(moreTasks);
@@ -127,7 +182,7 @@
 
         loadCalendarTodos();
     </script>
-    <script src="/js/theme-toggle.js?v=theme-4"></script>
+    <script src="/js/theme-toggle.js?v=theme-9"></script>
 </body>
 
 </html>

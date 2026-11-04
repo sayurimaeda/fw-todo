@@ -40,6 +40,7 @@ body.light-mode .todo-table td,
 body.light-mode .calendar-table th,
 body.light-mode .calendar-table td { border-color: #94a3b8; }
 body.light-mode .todo-table tbody tr.todo-overdue { background: #fee2e2; }
+body.light-mode .todo-table tbody tr.todo-due-soon { background: #fef3c7; }
 body.light-mode .flash { border-color: #cbd5e1; background: #f1f5f9; }
 body.light-mode .search-bar input,
 body.light-mode .search-bar select,
@@ -49,6 +50,35 @@ body.light-mode .btn.sub { background: #f1f5f9; color: #1e293b; }
 body.light-mode .link,
 body.light-mode a:visited:not(.btn) { color: #1d4ed8; }
 body.light-mode .theme-toggle { border-color: #64748b; background: #e2e8f0; color: #0f172a; }
+
+.page-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 8px 0 16px;
+}
+
+.nav-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #64748b;
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: #1e293b;
+    color: #bfdbfe;
+    text-decoration: none;
+}
+
+.nav-action:hover { background: #334155; }
+.nav-icon { font-size: 18px; line-height: 1; }
+
+body.light-mode .nav-action {
+    background: #e2e8f0;
+    color: #1d4ed8;
+}
+
+body.light-mode .nav-action:hover { background: #cbd5e1; }
 
 .container {
     width: 100%;
@@ -83,6 +113,19 @@ body.light-mode .theme-toggle { border-color: #64748b; background: #e2e8f0; colo
 
 .todo-table tbody tr.todo-overdue {
     background: #451a1a;
+}
+
+.todo-detail {
+    color: #cbd5e1;
+    font-size: 12px;
+}
+
+body.light-mode .todo-detail {
+    color: #475569;
+}
+
+.todo-table tbody tr.todo-due-soon {
+    background: #713f12;
 }
 
 .priority-mark {
@@ -140,6 +183,54 @@ body.light-mode .theme-toggle { border-color: #64748b; background: #e2e8f0; colo
     margin: 4px 0 0;
     color: #fca5a5;
     font-weight: bold;
+}
+
+.voice-input {
+    margin-top: 4px;
+    padding: 4px 10px;
+    font-size: 14px;
+}
+
+.voice-tools {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 8px 0 20px;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    padding: 10px 14px;
+    background: #1e293b;
+}
+
+.voice-tools-copy h2 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.voice-tools-copy p {
+    margin: 2px 0;
+}
+
+body.light-mode .voice-tools {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+}
+
+.voice-tools .btn {
+    padding: 4px 10px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.voice-status {
+    min-height: 1.5em;
+    margin: 6px 0;
+    color: #94a3b8;
+}
+
+body.light-mode .voice-status {
+    color: #475569;
 }
 
 .confirm-value {
@@ -209,7 +300,52 @@ a:visited:not(.btn) {
     background: #1e293b;
 }
 
+.calendar-table.weekly-calendar td {
+    height: 180px;
+}
+
+.calendar-weather {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    color: #cbd5e1;
+    font-size: 12px;
+}
+
+.calendar-day {
+    display: block;
+    text-align: center;
+}
+
+.calendar-weather-icon {
+    min-height: 30px;
+    font-size: 25px;
+    line-height: 1.2;
+}
+
+.calendar-temperatures {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.temperature-high { color: #fb7185; }
+.temperature-low { color: #a78bfa; }
+
+body.light-mode .calendar-weather {
+    color: #334155;
+}
+
 @media (max-width: 600px) {
+    .voice-tools {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
     .calendar-table th,
     .calendar-table td {
         padding: 4px;

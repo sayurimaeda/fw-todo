@@ -1,8 +1,8 @@
 package com.example.todoapp;
 
-import java.util.List;
-
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class HomeController {
 
     private final TodoService todoService;
+    private final TodoTemplateStore templateStore;
 
-    public HomeController(TodoService todoService) {
+    public HomeController(TodoService todoService, TodoTemplateStore templateStore) {
         this.todoService = todoService;
+        this.templateStore = templateStore;
     }
 
     @GetMapping("/")
@@ -88,6 +90,74 @@ public class HomeController {
     public String createTodo(@ModelAttribute Todo todo, RedirectAttributes redirectAttributes) {
         todoService.create(todo);
         redirectAttributes.addFlashAttribute("message", "登録しました");
+        return "redirect:/todos";
+    }
+
+    @GetMapping("/templates")
+    public String templates(Model model) {
+        model.addAttribute("templates", templateStore.findAll());
+        return "templates";
+    }
+
+    @GetMapping("/templates/new")
+    public String newTemplate() { return "template-create"; }
+
+    @PostMapping("/templates")
+    public String createTemplate(@RequestParam String name, @RequestParam String category,
+            @RequestParam(required = false) String description,
+            @RequestParam(name = "itemTitles", required = false) List<String> itemTitles,
+            RedirectAttributes redirectAttributes) {
+        List<String> titles = itemTitles == null ? List.of() : itemTitles.stream()
+                .map(String::trim).filter(title -> !title.isEmpty()).toList();
+        if (name.isBlank() || category.isBlank() || titles.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message", "テンプレート名と項目を1つ以上入力してください。");
+            return "redirect:/templates/new";
+        }
+        templateStore.create(name.trim(), description == null ? "" : description.trim(), category, titles);
+        redirectAttributes.addFlashAttribute("message", "テンプレートを登録しました。");
+        return "redirect:/templates";
+    }
+
+    @PostMapping("/templates/{id}/delete")
+    public String deleteTemplate(@PathVariable long id, RedirectAttributes redirectAttributes) {
+        templateStore.delete(id);
+        redirectAttributes.addFlashAttribute("message", "テンプレートを削除しました。");
+        return "redirect:/templates";
+    }
+
+    @PostMapping("/templates/{id}/apply")
+    public String applyTemplate(@PathVariable long id, @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "2") Integer priority,
+            @RequestParam(required = false) LocalDate dueDate,
+            @RequestParam(required = false) String detail, RedirectAttributes redirectAttributes) {
+        TodoTemplateStore.TemplateView template = templateStore.findAll().stream()
+                .filter(item -> item.id() == id).findFirst().orElse(null);
+        if (template == null) {
+            redirectAttributes.addFlashAttribute("message", "テンプレートが見つかりません。");
+            return "redirect:/templates";
+        }
+        List<String> titles = templateStore.findItems(id);
+        String selectedCategory = template != null && template.category() != null
+                ? template.category() : category;
+        if (selectedCategory == null || selectedCategory.isBlank()) {
+            redirectAttributes.addFlashAttribute("message", "このテンプレートのジャンルを選択してください。");
+            return "redirect:/templates";
+        }
+        for (String title : titles) {
+            String todoTitle = template.name() + "： " + title;
+            if (todoTitle.length() > 255) {
+                redirectAttributes.addFlashAttribute("message", "テンプレート名とタスク名を合わせて255文字以内にしてください。");
+                return "redirect:/templates";
+            }
+            Todo todo = new Todo();
+            todo.setTitle(todoTitle);
+            todo.setDetail(detail == null || detail.isBlank() ? null : detail.trim());
+            todo.setCategory(selectedCategory);
+            todo.setPriority(priority);
+            todo.setDueDate(dueDate);
+            todoService.create(todo);
+        }
+        redirectAttributes.addFlashAttribute("message", titles.size() + "件のToDoを作成しました。");
         return "redirect:/todos";
     }
 
