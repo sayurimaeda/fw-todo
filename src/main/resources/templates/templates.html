@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>テンプレート一覧</title>
-    <link rel="stylesheet" href="/css/style.css?v=theme-8">
+    <link rel="stylesheet" href="/css/style.css?v=theme-12">
 </head>
 <body>
 <main class="container">
@@ -31,7 +31,11 @@
             <label>優先度
                 <select class="form-input" name="priority"><option value="1">高</option><option value="2" selected>中</option><option value="3">低</option></select>
             </label>
-            <label>期限（任意） <input class="form-input" type="date" name="dueDate"></label>
+            <label>期限を言葉で入力（任意）
+                <input class="form-input" type="text" data-natural-date autocomplete="off" placeholder="例：明日、来週月曜、11月20日">
+            </label>
+            <p class="date-parse-status" data-date-parse-status aria-live="polite"></p>
+            <label>またはカレンダーで選択 <input class="form-input" type="date" name="dueDate"></label>
             <button class="btn" type="submit">このテンプレートからToDoを作成</button>
         </form>
         <form th:action="@{/templates/{id}/delete(id=${template.id})}" method="post" style="margin-top:8px">
@@ -39,6 +43,7 @@
         </form>
     </section>
 </main>
-<script src="/js/theme-toggle.js?v=theme-7"></script>
+<script src="/js/natural-date.js?v=date-1"></script>
+<script src="/js/theme-toggle.js?v=theme-12"></script>
 </body>
 </html>

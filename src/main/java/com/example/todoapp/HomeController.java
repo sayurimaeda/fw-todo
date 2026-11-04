@@ -71,6 +71,11 @@ public class HomeController {
         return "create";
     }
 
+    @GetMapping("/settings")
+    public String settings() {
+        return "settings";
+    }
+
     @PostMapping("/todos/confirm")
     public String confirmCreate(@Valid @ModelAttribute Todo todo, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {

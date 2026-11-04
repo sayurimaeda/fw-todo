@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>やること一覧</title>
-    <link rel="stylesheet" href="/css/style.css?v=theme-8">
+    <link rel="stylesheet" href="/css/style.css?v=theme-12">
 </head>
 
 <body>
@@ -20,14 +20,10 @@
     <a class="nav-action" href="/todos?trash=1"><span class="nav-icon" aria-hidden="true">&#128465;</span>&#12372;&#12415;&#31665;&#12434;&#35211;&#12427;</a>
 </nav>
 <p th:if="${trash}"><a class="link" href="/todos">&#19968;&#35239;&#12408;&#25147;&#12427;</a></p>
-<section class="voice-tools" th:unless="${trash}" aria-labelledby="voice-heading">
-    <div class="voice-tools-copy">
-        <h2 id="voice-heading">&#38899;&#22768;&#12391;&#30906;&#35469;</h2>
-        <p>&#29694;&#22312;&#34920;&#31034;&#20013;&#12398;&#26410;&#23436;&#20102;ToDo&#12434;&#35501;&#12415;&#19978;&#12370;&#12414;&#12377;&#12290;</p>
-        <p class="voice-status" aria-live="polite"></p>
-    </div>
+<div class="voice-tools" th:unless="${trash}">
     <button class="btn sub" id="read-incomplete-todos" type="button"><span aria-hidden="true">&#128266;</span> &#19968;&#35239;&#12434;&#35501;&#12415;&#19978;&#12370;&#12427;</button>
-</section>
+    <span class="voice-status" aria-live="polite"></span>
+</div>
 <div class="search-bar" th:unless="${trash}">
             <form th:action="@{/todos}" method="get">
                 <label for="keyword">やることの名前</label>
@@ -71,7 +67,7 @@
             </thead>
             <tbody>
                 <tr th:each="todo : ${todos}"
-                    th:attr="data-due-date=${todo.dueDate == null ? '' : todo.dueDate},data-completed=${todo.completed}">
+                    th:attr="data-due-date=${todo.dueDate == null ? '' : todo.dueDate},data-completed=${todo.completed},data-title=${todo.title}">
                     <td><span th:text="${todo.title}">やること</span><br th:if="${!#strings.isEmpty(todo.detail)}"><small class="todo-detail" th:if="${!#strings.isEmpty(todo.detail)}" th:text="${todo.detail}">メモ</small></td>
                     <td>
                         <form th:unless="${trash}" th:action="@{/todos/{id}/pin(id=${todo.id})}" method="post">
@@ -133,8 +129,9 @@
             }
         });
     </script>
-    <script src="/js/voice.js?v=voice-1"></script>
-    <script src="/js/theme-toggle.js?v=theme-7"></script>
+    <script src="/js/voice.js?v=voice-2"></script>
+    <script src="/js/due-notifications.js?v=notice-2"></script>
+    <script src="/js/theme-toggle.js?v=theme-12"></script>
 </body>
 
 </html>

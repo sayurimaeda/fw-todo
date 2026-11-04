@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新規登録</title>
-    <link rel="stylesheet" href="/css/style.css?v=theme-7">
+    <link rel="stylesheet" href="/css/style.css?v=theme-12">
 </head>
 <body>
     <main class="container">
@@ -46,7 +46,11 @@
                 <p class="error" th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}"></p>
             </div>
             <div class="form-row">
-                <label class="form-label" for="dueDate">期限</label>
+                <label class="form-label" for="naturalDueDate">期限を言葉で入力（例：明日、来週月曜）</label>
+                <input class="form-input" type="text" id="naturalDueDate" data-natural-date autocomplete="off">
+                <button class="btn sub voice-input" type="button" data-voice-target="naturalDueDate">🎙 期限を音声入力</button>
+                <p class="date-parse-status" data-date-parse-status aria-live="polite"></p>
+                <label class="form-label" for="dueDate">またはカレンダーで選択</label>
                 <input class="form-input" type="date" id="dueDate" th:field="*{dueDate}">
             </div>
             <button class="btn" type="submit">確認する</button>
@@ -54,8 +58,9 @@
         </form>
     </main>
     <p class="voice-status" aria-live="polite"></p>
+    <script src="/js/natural-date.js?v=date-1"></script>
     <script src="/js/voice.js?v=voice-1"></script>
     <p class="voice-status" aria-live="polite"></p>
-    <script src="/js/theme-toggle.js?v=theme-7"></script>
+    <script src="/js/theme-toggle.js?v=theme-12"></script>
 </body>
 </html>

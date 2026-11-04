@@ -1,58 +1,59 @@
 (() => {
     const storageKey = 'todoapp-theme';
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'theme-toggle';
-    button.innerHTML = '<svg viewBox="0 0 24 24" width="25" height="25" aria-hidden="true"><path d="M9 18h6m-5 3h4m-2-20a7 7 0 0 0-4 12.75c.7.5 1 1.15 1 2.25h6c0-1.1.3-1.75 1-2.25A7 7 0 0 0 12 1Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    button.style.position = 'fixed';
-    button.style.top = '16px';
-    button.style.right = '20px';
-    button.style.left = 'auto';
-    button.style.bottom = 'auto';
-    button.style.zIndex = '10000';
-    button.style.width = '48px';
-    button.style.height = '48px';
-    button.style.display = 'grid';
-    button.style.placeItems = 'center';
-    button.style.border = '1px solid #94a3b8';
-    button.style.borderRadius = '50%';
-    button.style.padding = '0';
-    button.style.background = '#334155';
-    button.style.color = '#fbbf24';
-    button.style.cursor = 'pointer';
-
-    const themeStyles = document.createElement('style');
-    themeStyles.textContent = `
-        body.light-mode { color: #1e293b !important; background: #f8fafc !important; }
-        body.light-mode .page-title { color: #0f172a !important; }
-        body.light-mode .todo-table th, body.light-mode .calendar-table th { background: #e2e8f0 !important; }
-        body.light-mode .todo-table th, body.light-mode .todo-table td, body.light-mode .calendar-table th, body.light-mode .calendar-table td { border-color: #94a3b8 !important; }
-        body.light-mode .todo-table tbody tr.todo-overdue { background: #fee2e2 !important; }
-        body.light-mode .flash { border-color: #cbd5e1 !important; background: #f1f5f9 !important; }
-        body.light-mode .search-bar input, body.light-mode .search-bar select, body.light-mode .form-input { border-color: #94a3b8 !important; background: #fff !important; color: #1e293b !important; }
-        body.light-mode .btn { border-color: #64748b !important; background: #e2e8f0 !important; color: #0f172a !important; }
-        body.light-mode .link, body.light-mode a:visited:not(.btn) { color: #1d4ed8 !important; }
-    `;
-    document.head.appendChild(themeStyles);
+    const accentPalettes = {
+        blue: {
+            light: ['#2563eb', '#1d4ed8', '#1d4ed8', '#dbeafe', '#93c5fd'],
+            dark: ['#3b82f6', '#2563eb', '#93c5fd', '#1e3a8a', '#3b82f6']
+        },
+        purple: {
+            light: ['#7c3aed', '#6d28d9', '#6d28d9', '#ede9fe', '#c4b5fd'],
+            dark: ['#8b5cf6', '#7c3aed', '#c4b5fd', '#3b1d69', '#8b5cf6']
+        },
+        green: {
+            light: ['#15803d', '#166534', '#166534', '#dcfce7', '#86efac'],
+            dark: ['#22c55e', '#16a34a', '#86efac', '#14532d', '#22c55e']
+        },
+        orange: {
+            light: ['#c2410c', '#9a3412', '#9a3412', '#ffedd5', '#fdba74'],
+            dark: ['#f97316', '#ea580c', '#fdba74', '#7c2d12', '#f97316']
+        },
+        pink: {
+            light: ['#be185d', '#9d174d', '#9d174d', '#fce7f3', '#f9a8d4'],
+            dark: ['#ec4899', '#db2777', '#f9a8d4', '#831843', '#ec4899']
+        }
+    };
+    const settingsLink = document.createElement('a');
+    settingsLink.className = 'theme-toggle';
+    settingsLink.href = '/settings';
+    settingsLink.setAttribute('aria-label', '\u8a2d\u5b9a');
+    settingsLink.title = '\u8a2d\u5b9a';
+    settingsLink.innerHTML = '<svg viewBox="0 0 24 24" width="25" height="25" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm9 4.7v-2.4l-2.2-.7a7.2 7.2 0 0 0-.7-1.6l1.1-2-1.7-1.7-2 1.1a7.2 7.2 0 0 0-1.6-.7L13.2 3h-2.4l-.7 2.2a7.2 7.2 0 0 0-1.6.7l-2-1.1-1.7 1.7 1.1 2a7.2 7.2 0 0 0-.7 1.6L3 10.8v2.4l2.2.7a7.2 7.2 0 0 0 .7 1.6l-1.1 2 1.7 1.7 2-1.1a7.2 7.2 0 0 0 1.6.7l.7 2.2h2.4l.7-2.2a7.2 7.2 0 0 0 1.6-.7l2 1.1 1.7-1.7-1.1-2a7.2 7.2 0 0 0 .7-1.6l2.2-.7Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
     const applyTheme = (theme) => {
         const isLight = theme === 'light';
         document.body.classList.toggle('light-mode', isLight);
         document.body.style.color = isLight ? '#1e293b' : '#e2e8f0';
         document.body.style.backgroundColor = isLight ? '#f8fafc' : '#0f172a';
-        button.style.background = isLight ? '#e2e8f0' : '#334155';
-        button.style.color = isLight ? '#92400e' : '#fbbf24';
-        const label = isLight ? '\u901a\u5e38\u30e2\u30fc\u30c9\u306b\u5207\u308a\u66ff\u3048' : '\u30c0\u30fc\u30af\u30e2\u30fc\u30c9\u306b\u5207\u308a\u66ff\u3048';
-        button.title = label;
-        button.setAttribute('aria-label', label);
-        button.setAttribute('aria-pressed', String(isLight));
+        applyAccent(localStorage.getItem('todoapp-accent') || 'blue');
     };
 
-    button.addEventListener('click', () => {
-        const nextTheme = document.body.classList.contains('light-mode') ? 'dark' : 'light';
-        localStorage.setItem(storageKey, nextTheme);
-        applyTheme(nextTheme);
+    const applyAccent = (name) => {
+        const palette = accentPalettes[name] || accentPalettes.blue;
+        const colors = document.body.classList.contains('light-mode') ? palette.light : palette.dark;
+        const properties = ['--accent-strong', '--accent-hover', '--accent-link', '--accent-soft', '--accent-border'];
+        properties.forEach((property, index) => {
+            document.documentElement.style.setProperty(property, colors[index]);
+        });
+    };
+
+    window.addEventListener('todoapp-theme-change', (event) => {
+        applyTheme(event.detail.theme);
     });
-    document.body.appendChild(button);
+    window.addEventListener('todoapp-accent-change', (event) => {
+        applyAccent(event.detail.accent);
+    });
+    if (window.location.pathname !== '/settings') {
+        document.body.appendChild(settingsLink);
+    }
     applyTheme(localStorage.getItem(storageKey) || 'dark');
 })();

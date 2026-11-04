@@ -45,7 +45,9 @@
     });
 
     const readButton = document.getElementById('read-incomplete-todos');
-    if (readButton) {
+    if (readButton && localStorage.getItem('todo-voice-read-enabled') === 'false') {
+        readButton.closest('.voice-tools')?.setAttribute('hidden', '');
+    } else if (readButton) {
         readButton.addEventListener('click', () => {
             if (!('speechSynthesis' in window)) {
                 setStatus('このブラウザーでは音声読み上げを利用できません。');

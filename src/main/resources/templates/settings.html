@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>設定</title>
+    <link rel="stylesheet" href="/css/style.css?v=theme-12">
+</head>
+<body>
+    <main class="container settings-page">
+        <h1 class="page-title">設定</h1>
+        <p><a class="btn sub" href="/todos">一覧へ戻る</a></p>
+
+        <section class="settings-card" aria-labelledby="notification-title">
+            <h2 id="notification-title">期限のお知らせ</h2>
+            <p>一覧を開いたとき、表示中の未完了ToDoに期限切れまたは3日以内のものがあれば、1日1回お知らせします。</p>
+            <label class="setting-option">
+                <input type="checkbox" id="due-notification-toggle">
+                ブラウザ通知を使う
+            </label>
+            <p class="setting-status" id="notification-setting-status" aria-live="polite"></p>
+        </section>
+
+        <section class="settings-card" aria-labelledby="voice-setting-title">
+            <h2 id="voice-setting-title">読み上げ</h2>
+            <p>オンにすると、一覧に小さな「一覧を読み上げる」ボタンが表示されます。押すと、現在表示中の一覧にある未完了ToDoの題名とメモを読み上げます。オフにすると、一覧からボタンが消えます。</p>
+            <label class="setting-option">
+                <input type="checkbox" id="voice-read-toggle">
+                読み上げを使う
+            </label>
+        </section>
+
+        <section class="settings-card" aria-labelledby="theme-setting-title">
+            <h2 id="theme-setting-title">画面の明るさ</h2>
+            <p>オンにすると暗い画面、オフにすると明るい画面になります。右上の電球ボタンとも連動します。</p>
+            <label class="setting-option">
+                <input type="checkbox" id="dark-mode-toggle">
+                ダークモード
+            </label>
+        </section>
+
+        <section class="settings-card" aria-labelledby="accent-setting-title">
+            <h2 id="accent-setting-title">テーマカラー</h2>
+            <p>ボタンやリンクなどの基本色を選べます。ジャンルごとの色分けとは別の設定です。</p>
+            <label class="setting-option" for="accent-color-select">全体の色</label>
+            <select class="form-input setting-select" id="accent-color-select">
+                <option value="blue">青</option>
+                <option value="purple">紫</option>
+                <option value="green">緑</option>
+                <option value="orange">オレンジ</option>
+                <option value="pink">ピンク</option>
+            </select>
+            <span class="accent-preview" id="accent-color-preview" aria-hidden="true"></span>
+        </section>
+    </main>
+    <script src="/js/theme-toggle.js?v=theme-12"></script>
+    <script src="/js/settings.js?v=settings-3"></script>
+</body>
+</html>
