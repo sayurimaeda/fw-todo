@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>カレンダー</title>
-    <link rel="stylesheet" th:href="@{/css/style.css(v='theme-9')}">
+    <link rel="stylesheet" th:href="@{/css/style.css(v='paper-6')}">
 </head>
 
 <body>
@@ -122,15 +122,15 @@
                 const holidayName = holidays[date];
                 if (holidayName) {
                     cell.title = holidayName;
-                    cell.style.backgroundColor = '#fde68a';
+                    cell.classList.add('calendar-holiday');
                     return;
                 }
 
                 const dayOfWeek = new Date(`${date}T00:00:00`).getDay();
                 if (dayOfWeek === 0) {
-                    cell.style.backgroundColor = '#fecaca';
+                    cell.classList.add('calendar-sunday');
                 } else if (dayOfWeek === 6) {
-                    cell.style.backgroundColor = '#bfdbfe';
+                    cell.classList.add('calendar-saturday');
                 }
             });
 
@@ -167,7 +167,7 @@
                     taskName.style.display = 'block';
                     taskName.textContent = todo.title;
                     if (todo.dueDate < today && !todo.completed) {
-                        taskName.style.color = '#dc2626';
+                        taskName.classList.add('calendar-overdue');
                     }
                     cell.append(taskName);
                 });
@@ -182,7 +182,7 @@
 
         loadCalendarTodos();
     </script>
-    <script src="/js/theme-toggle.js?v=theme-12"></script>
+    <script src="/js/theme-toggle.js?v=paper-1"></script>
 </body>
 
 </html>
