@@ -4,6 +4,7 @@
     const voiceToggle = document.getElementById('voice-read-toggle');
     const themeToggle = document.getElementById('dark-mode-toggle');
     const accentSelect = document.getElementById('accent-color-select');
+    const backgroundSelect = document.getElementById('background-design-select');
 
     if (notificationToggle) {
         const enabled = localStorage.getItem('todo-due-notifications-enabled') === 'true';
@@ -64,6 +65,21 @@
             localStorage.setItem('todoapp-accent', accentSelect.value);
             window.dispatchEvent(new CustomEvent('todoapp-accent-change', {
                 detail: { accent: accentSelect.value }
+            }));
+        });
+    }
+
+    if (backgroundSelect) {
+        const savedBackground = localStorage.getItem('todoapp-background-design') || '';
+        backgroundSelect.value = savedBackground;
+        backgroundSelect.addEventListener('change', () => {
+            if (backgroundSelect.value) {
+                localStorage.setItem('todoapp-background-design', backgroundSelect.value);
+            } else {
+                localStorage.removeItem('todoapp-background-design');
+            }
+            window.dispatchEvent(new CustomEvent('todoapp-background-change', {
+                detail: { background: backgroundSelect.value }
             }));
         });
     }

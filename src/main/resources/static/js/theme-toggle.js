@@ -1,5 +1,12 @@
 (() => {
     const storageKey = 'todoapp-theme';
+    const backgroundDesigns = {
+        mist: '/images/background-mist-purple.png',
+        night: '/images/background-moon-blue.png',
+        tools: '/images/background-tsukumogami-green.png',
+        parade: '/images/background-hyakki-orange.png',
+        village: '/images/background-yokai-village-pink.png'
+    };
     // Keep the existing stored accent keys so previously saved settings continue to work.
     const palettes = {
         blue: {
@@ -103,8 +110,22 @@
         applyAccent(localStorage.getItem('todoapp-accent') || 'blue');
     };
 
+    const applyBackgroundDesign = (name) => {
+        if (!document.body.classList.contains('todo-list-page')) return;
+        const image = backgroundDesigns[name];
+        if (image) {
+            document.body.dataset.backgroundDesign = name;
+            document.body.style.setProperty('--todo-list-background', `url("${image}")`);
+        } else {
+            delete document.body.dataset.backgroundDesign;
+            document.body.style.removeProperty('--todo-list-background');
+        }
+    };
+
     window.addEventListener('todoapp-theme-change', (event) => applyTheme(event.detail.theme));
     window.addEventListener('todoapp-accent-change', (event) => applyAccent(event.detail.accent));
+    window.addEventListener('todoapp-background-change', (event) => applyBackgroundDesign(event.detail.background));
     if (window.location.pathname !== '/settings') document.body.appendChild(settingsLink);
     applyTheme(localStorage.getItem(storageKey) || 'dark');
+    applyBackgroundDesign(localStorage.getItem('todoapp-background-design'));
 })();
